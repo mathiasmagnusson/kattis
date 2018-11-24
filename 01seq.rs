@@ -7,6 +7,16 @@ enum Char {
 	Quest,
 }
 
+impl Char {
+	fn from_int(int: u32) -> Char {
+		if int == 0 {
+			Char::Zero
+		} else {
+			Char::One
+		}
+	}
+}
+
 fn main() {
 	let stdin = io::stdin();
 	let line: Vec<Char> = stdin.lock().lines().next().unwrap().unwrap().chars().map(|c| match c { '0' => Char::Zero, '1' => Char::One, '?' => Char::Quest, _ => panic!("") }).collect();
@@ -41,25 +51,34 @@ fn for_every_possibility<F>(line: &[Char], mut callback: F)
 		return;
 	}
 
-	let mut s: Vec<Char> = vec![Char::Zero; q_indices.len()];
-	'outer: loop {
+	// let mut s: Vec<Char> = vec![Char::Zero; q_indices.len()];
+	// 'outer: loop {
+	// 	let mut seq: Vec<Char> = line.to_vec();
+	// 	for j in 0..s.len() {
+	// 		seq[q_indices[j]] = s[j];
+	// 	}
+
+	// 	callback(&seq);
+
+	// 	'inner: for i in (0..s.len()).rev() {
+	// 		if s[i] == Char::Zero {
+	// 			s[i] = Char::One;
+	// 			break;
+	// 		} else {
+	// 			s[i] = Char::Zero;
+	// 			if i == 0 {
+	// 				break 'outer;
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	for i in 0..2_u32.pow(q_indices.len() as u32) {
 		let mut seq: Vec<Char> = line.to_vec();
-		for j in 0..s.len() {
-			seq[q_indices[j]] = s[j];
+		for j in 0..q_indices.len() {
+			seq[q_indices[j]] = Char::from_int((1 << j) & i);
 		}
 
 		callback(&seq);
-
-		'inner: for i in (0..s.len()).rev() {
-			if s[i] == Char::Zero {
-				s[i] = Char::One;
-				break;
-			} else {
-				s[i] = Char::Zero;
-				if i == 0 {
-					break 'outer;
-				}
-			}
-		}
 	}
 }
