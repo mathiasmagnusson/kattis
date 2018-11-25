@@ -1,10 +1,10 @@
 const readline = require("readline");
 
 let rl = readline.createInterface({
-	input: require("fs").createReadStream("input.txt"),
+	input: process.stdin,
 });
 
-let env;
+let env = new Object();
 
 rl.on("line", line => {
 	let words = line.split(' ');
@@ -15,14 +15,35 @@ rl.on("line", line => {
 			break;
 		case "calc":
 			let args = words.slice(1, words.indexOf("="));
-			evaluate(args, env);
+			args.unshift("+");
+			let word = evaluate(args, env);
+			words.shift();
+			console.log(`${words.join(' ')} ${word}`);
 			break;
 		case "clear":
-			env = {};
+			env = new Object();
 			break;
 	}
 });
 
 function evaluate(args, env) {
+	let total = 0;
 	
+	for (let i = 0; i < args.length; i += 2) {
+		let operator = args[i];
+		let word = args[i + 1];
+
+		if (!env.hasOwnProperty(word))
+			return 'unknown';
+
+		total += env[word] * (operator == "+" ? 1 : -1);
+	}
+
+	for (const [word, value] of Object.entries(env)) {
+		if (total === value) {
+			return word;
+		}
+	}
+
+	return 'unknown';
 }
