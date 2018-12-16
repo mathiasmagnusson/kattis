@@ -11,25 +11,20 @@ fn main() {
 	let stdin = io::stdin();
 	let line: Vec<Char> = stdin.lock().lines().next().unwrap().unwrap().chars().map(|c| match c { '0' => Char::Zero, '1' => Char::One, '?' => Char::Quest, _ => panic!("not okay man") }).collect();
 
-	let mut inversions = 0;
+	let mut inversions = 0_usize;
 	for_every_possibility(&line, |seq: &[Char]| {
-		// for c in seq {
-		// 	print!("{}", match c { Char::One => '1', Char::Zero => '0', Char::Quest => '?' });
-		// }
-		// println!("");
-		// return;
-
 		let mut finishes = 0;
 
 		for i in 0..seq.len() {
 			if seq[i] == Char::Zero {
 				inversions += i - finishes;
 				finishes += 1;
+				inversions %= 1_000_000_007;
 			}
 		}
 	});
 
-	println!("{}", inversions % 1_000_000_007);
+	println!("{}", inversions);
 }
 
 fn for_every_possibility<F>(line: &[Char], mut callback: F)
