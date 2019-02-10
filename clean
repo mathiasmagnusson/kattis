@@ -1,1 +1,1 @@
-rm *.{exe,pdb}
+rm {*.{exe,pdb},in,out} 2>/dev/null
